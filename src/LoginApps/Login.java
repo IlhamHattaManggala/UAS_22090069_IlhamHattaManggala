@@ -50,6 +50,7 @@ public class Login extends javax.swing.JFrame {
         btnExit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/Gambar/polri2.png")).getImage());
         setUndecorated(true);
         setSize(new java.awt.Dimension(688, 419));
 

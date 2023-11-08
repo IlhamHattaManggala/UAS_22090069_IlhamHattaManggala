@@ -6,12 +6,13 @@ package Dashboard;
 
 import static Dashboard.PanelData.tblData;
 import JavaPackage.Koneksi;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
-import java.util.Date;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -26,6 +27,34 @@ public class Laporan extends javax.swing.JPanel {
     public Laporan() {
         initComponents();
         ViewData("");
+        
+        
+        cmbTanggal.removeAllItems();
+        for(int i = 1; i <= 31; i++){
+            cmbTanggal.addItem(""+i);
+        }
+        
+        String[] namaBulan = {"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
+
+        cmbBulan.removeAllItems();
+        for (String bulan : namaBulan) {
+            cmbBulan.addItem(bulan);
+        }
+
+        
+        cmbTahun.removeAllItems();
+        for(int i = 2017; i <= 2100; i++){
+            cmbTahun.addItem(""+i);
+        }
+        
+        btnFilter.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Memanggil metode filterData() saat tombol "Cetak" ditekan
+            filterData();
+        }
+    });
+
     }
 
     /**
@@ -48,8 +77,10 @@ public class Laporan extends javax.swing.JPanel {
         tblLaporan = new javax.swing.JTable();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        btnFilter = new javax.swing.JButton();
 
         setMinimumSize(new java.awt.Dimension(500, 500));
+        setName("pn_laporan"); // NOI18N
         setPreferredSize(new java.awt.Dimension(500, 586));
         setLayout(new java.awt.CardLayout());
 
@@ -99,6 +130,13 @@ public class Laporan extends javax.swing.JPanel {
 
         jSeparator2.setForeground(new java.awt.Color(255, 255, 255));
 
+        btnFilter.setText("FILTER");
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -109,16 +147,21 @@ public class Laporan extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(cmbTanggal, 0, 152, Short.MAX_VALUE)
-                        .addGap(11, 11, 11)
-                        .addComponent(cmbBulan, 0, 170, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmbTahun, 0, 143, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrol, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator2))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jSeparator2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(cmbTanggal, 0, 152, Short.MAX_VALUE)
+                                .addGap(11, 11, 11)
+                                .addComponent(cmbBulan, 0, 170, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmbTahun, 0, 143, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -133,10 +176,12 @@ public class Laporan extends javax.swing.JPanel {
                     .addComponent(cmbTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbTahun, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbBulan, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrol, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addComponent(scrol, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -145,10 +190,18 @@ public class Laporan extends javax.swing.JPanel {
         jPanel1.add(jPanel3, java.awt.BorderLayout.PAGE_START);
 
         add(jPanel1, "pnUtama");
+
+        getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
+        // TODO add your handling code here:
+        filterData();
+    }//GEN-LAST:event_btnFilterActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnFilter;
     private javax.swing.JComboBox<String> cmbBulan;
     private javax.swing.JComboBox<String> cmbTahun;
     private javax.swing.JComboBox<String> cmbTanggal;
@@ -163,7 +216,7 @@ public class Laporan extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public static void ViewData(String where) {
-        Object[] kolom = {"ID","NAMA","NIP","JABATAN","JENIS KELAMIN","NO HP", "ALAMAT", "TANGGAL MASUK"};
+        Object[] kolom = {"ID","NAMA","NIP","JABATAN","JENIS KELAMIN", "SHIFT PIKET", "TANGGAL MASUK", "ALAMAT", "JAM MASUK"};
         DefaultTableModel model = new DefaultTableModel(null, kolom);
         tblLaporan.setModel(model);
 
@@ -181,9 +234,11 @@ public class Laporan extends javax.swing.JPanel {
                 String nip = rs.getString("nip");
                 String jabatan = rs.getString("jabatan");
                 String jk = rs.getString("jk");
+                String shiftPiket = rs.getString("shift_piket");
+                String tglMasuk = rs.getString("tanggal_masuk");
                 String alamat = rs.getString("alamat");
-                String tanggal_masuk = rs.getString("tanggal_masuk");
-                Object[] data = {id,nama,nip,jabatan,jk,alamat,tanggal_masuk};
+                String jamMasuk= rs.getString("jam_masuk");
+                Object[] data = {id,nama,nip,jabatan,jk, shiftPiket,tglMasuk,alamat,jamMasuk};
                 model.addRow(data); 
             }
         } catch (SQLException e) {
@@ -191,68 +246,68 @@ public class Laporan extends javax.swing.JPanel {
     }
     
     public void filterData() {
-        // Mendapatkan pilihan dari combo box
-        String selectedTanggal = cmbTanggal.getSelectedItem().toString();
-        String selectedBulan = cmbBulan.getSelectedItem().toString();
-        String selectedTahun = cmbTahun.getSelectedItem().toString();
-
-        // Membuat kueri SQL berdasarkan pilihan combo box
-        String whereClause = " WHERE ";
-        whereClause += "tanggal_masuk = '" + selectedTanggal + "' ";
-        whereClause += "AND bulan = '" + selectedBulan + "' ";
-        whereClause += "AND tahun = '" + selectedTahun + "' ";
-
-        // Membersihkan tabel tblLaporan
+    // Membersihkan tabel tblLaporan
         DefaultTableModel model = (DefaultTableModel) tblLaporan.getModel();
         model.setRowCount(0);
 
-        // Mengambil data dari tblData1 dan tbl2 sesuai dengan kriteria
+        // Mengambil data dari database berdasarkan tanggal, bulan, dan tahun yang dipilih
         try {
             Connection c = Koneksi.sambungkeDB();
             Statement st = c.createStatement();
 
-            // Query untuk mengambil data dari tblData1
-            String sqlData1 = "SELECT id, nama, nip, jabatan, jk, no_hp, alamat FROM tblData1" + whereClause;
-            ResultSet rsData1 = st.executeQuery(sqlData1);
+            // Mendapatkan pilihan dari combo box
+            String selectedTanggal = cmbTanggal.getSelectedItem().toString();
+            String selectedBulan = cmbBulan.getSelectedItem().toString();
+            String selectedTahun = cmbTahun.getSelectedItem().toString();
 
-            // Query untuk mengambil data dari tbl2
-            String sqlTbl2 = "SELECT id, nama, nip, jabatan, tanggal_masuk, jam_masuk, jam_pulang FROM tbl2" + whereClause;
-            ResultSet rsTbl2 = st.executeQuery(sqlTbl2);
+            // Query untuk mengambil data dari "data" dan "tabel_absensi" berdasarkan "id"
+            // Query untuk mengambil data dari "data" dan "tabel_absensi" berdasarkan "id"
+            String sqlData = "SELECT d.id, d.nama, d.nip, d.jabatan, d.jk, d.alamat, ta.tanggal, ta.jam_masuk, ta.shift_piket FROM data d " +
+                "JOIN tabel_absensi ta ON d.id = ta.id " +
+                "WHERE ta.tanggal = ?";
+
+            PreparedStatement preparedStatement = c.prepareStatement(sqlData);
+            preparedStatement.setString(1, selectedTanggal);
+            preparedStatement.setString(2, selectedBulan);
+            preparedStatement.setString(3, selectedTahun);
+
+
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             // Mengisi tabel tblLaporan dengan data yang ditemukan
-            while (rsData1.next()) {
-                Object[] data = new Object[7];
-                data[0] = rsData1.getString("id");
-                data[1] = rsData1.getString("nama");
-                data[2] = rsData1.getString("nip");
-                data[3] = rsData1.getString("jabatan");
-                data[4] = rsData1.getString("jk");
-                data[5] = rsData1.getString("no_hp");
-                data[6] = rsData1.getString("alamat");
-                model.addRow(data);
-            }
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                String nama = resultSet.getString("nama");
+                String nip = resultSet.getString("nip");
+                String jabatan = resultSet.getString("jabatan");
+                String jk = resultSet.getString("jk");
+                String alamat = resultSet.getString("alamat");
+                String tanggalMasuk = resultSet.getString("tanggal");
+                String jamMasuk = resultSet.getString("jam_masuk");
+                String shiftPiket = resultSet.getString("shift_piket");
 
-            while (rsTbl2.next()) {
-                Object[] data = new Object[7];
-                data[0] = rsTbl2.getString("id");
-                data[1] = rsTbl2.getString("nama");
-                data[2] = rsTbl2.getString("nip");
-                data[3] = rsTbl2.getString("jabatan");
-                data[4] = rsTbl2.getString("tanggal_masuk");
-                data[5] = rsTbl2.getString("jam_masuk");
-                data[6] = rsTbl2.getString("jam_pulang");
-                model.addRow(data);
+                String insertSql = "INSERT INTO laporan (id, nama, nip, jabatan, jk, alamat, tanggal_masuk, jam_masuk, shift_piket) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement insertStatement = c.prepareStatement(insertSql);
+                insertStatement.setString(1, id);
+                insertStatement.setString(2, nama);
+                insertStatement.setString(3, nip);
+                insertStatement.setString(4, jabatan);
+                insertStatement.setString(5, jk);
+                insertStatement.setString(6, alamat);
+                insertStatement.setString(7, tanggalMasuk);
+                insertStatement.setString(8, jamMasuk);
+                insertStatement.setString(9, shiftPiket);
+                insertStatement.executeUpdate();
             }
 
             // Tutup sumber daya
-            rsData1.close();
-            rsTbl2.close();
+            resultSet.close();
+            preparedStatement.close();
             st.close();
             c.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 
 }
